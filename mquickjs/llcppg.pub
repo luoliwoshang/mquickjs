@@ -1,0 +1,17 @@
+JSBytecodeHeader
+JSBytecodeHeader32
+JSCFinalizer
+JSCFunction
+JSCFunctionDef
+JSCFunctionDefEnum
+JSCFunctionEnum
+JSCFunctionType
+JSCStringBuf
+JSContext
+JSGCRef
+JSInterruptHandler
+JSObjectClassEnum
+JSSTDLibraryDef
+JSValue
+JSWord
+JSWriteFunc
