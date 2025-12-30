@@ -5,7 +5,7 @@ import (
 	_ "unsafe"
 )
 
-const JSW = 8
+const JSW = 4
 const JS_TAG_SPECIAL_BITS = 5
 const JS_EX_NORMAL = 0
 const JS_EX_CALL = 1
@@ -15,8 +15,8 @@ const JS_BYTECODE_MAGIC = 0xacfb
 type JSContext struct {
 	Unused [8]uint8
 }
-type JSWord c.Uint64T
-type JSValue c.Uint64T
+type JSWord c.Uint32T
+type JSValue c.Uint32T
 
 const (
 	JS_TAG_INT           c.Int = 0
@@ -30,7 +30,6 @@ const (
 	JS_TAG_UNINITIALIZED c.Int = 23
 	JS_TAG_STRING_CHAR   c.Int = 27
 	JS_TAG_CATCH_OFFSET  c.Int = 31
-	JS_TAG_SHORT_FLOAT   c.Int = 5
 )
 
 type JSObjectClassEnum c.Int
@@ -388,20 +387,6 @@ func (recv_ *JSContext) JSPrepareBytecode(hdr *JSBytecodeHeader, pdata_buf **c.U
 /* only used on the host when compiling to file */
 // llgo:link (*JSContext).JSRelocateBytecode2 C.JS_RelocateBytecode2
 func (recv_ *JSContext) JSRelocateBytecode2(hdr *JSBytecodeHeader, buf *c.Uint8T, buf_len c.Uint32T, new_base_addr c.UintptrT, update_atoms c.Int) c.Int {
-	return 0
-}
-
-type JSBytecodeHeader32 struct {
-	Magic         c.Uint16T
-	Version       c.Uint16T
-	BaseAddr      c.Uint32T
-	UniqueStrings c.Uint32T
-	MainFunc      c.Uint32T
-}
-
-/* only used on the host when compiling to file. A 32 bit bytecode is generated on a 64 bit host. */
-// llgo:link (*JSContext).JSPrepareBytecode64to32 C.JS_PrepareBytecode64to32
-func (recv_ *JSContext) JSPrepareBytecode64to32(hdr *JSBytecodeHeader32, pdata_buf **c.Uint8T, pdata_len *c.Uint32T, eval_code JSValue) c.Int {
 	return 0
 }
 
