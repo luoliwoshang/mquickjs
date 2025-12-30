@@ -11,6 +11,78 @@
 | `libm.c` | 软件浮点数学库 |
 | `cutils.c` | 通用工具函数 |
 
+---
+
+## 编译前置条件：生成头文件
+
+**重要**：编译前必须先生成两个头文件，否则会报错：
+
+```
+fatal error: 'mquickjs_atom.h' file not found
+```
+
+### 需要生成的文件
+
+| 文件 | 作用 |
+|------|------|
+| `mquickjs_atom.h` | JavaScript 关键字和内置字符串的 ID 映射表 |
+| `mqjs_stdlib.h` | 标准库数据（需与 atom 配套） |
+
+### mquickjs_atom.h 是什么？
+
+这是 JS 关键字的数字 ID 定义：
+
+```c
+#define JS_ATOM_null 0
+#define JS_ATOM_false 2
+#define JS_ATOM_true 4
+#define JS_ATOM_if 6
+#define JS_ATOM_var 12
+#define JS_ATOM_function 54
+#define JS_ATOM_class 62
+...
+```
+
+JS 引擎用数字 ID 代替字符串比较，提高解析速度：
+
+```
+源代码: "var x = 1"
+           ↓ 解析
+引擎内部: JS_ATOM_var (12)  →  快速匹配！
+```
+
+### 如何生成
+
+```bash
+# 1. 先编译 mqjs_stdlib 工具（在主机上）
+make mqjs_stdlib
+
+# 2. 生成头文件（根据目标平台选择）
+
+# 64 位平台（主机、Linux 等）
+./mqjs_stdlib -a > mquickjs_atom.h
+./mqjs_stdlib > mqjs_stdlib.h
+
+# 32 位平台（ESP32）⚠️ 必须用 -m32
+./mqjs_stdlib -m32 -a > mquickjs_atom.h
+./mqjs_stdlib -m32 > mqjs_stdlib.h
+```
+
+### 32 位 vs 64 位
+
+| 目标平台 | 生成参数 | 说明 |
+|----------|----------|------|
+| 主机 (64位) | 无参数 | 默认 64 位 |
+| ESP32 | `-m32` | **必须** 使用 32 位 |
+| ESP32-C3 (RISC-V) | `-m32` | **必须** 使用 32 位 |
+
+**警告**：如果平台不匹配，会出现：
+- `var` 关键字无法识别
+- 字符串拼接崩溃
+- 各种奇怪的运行时错误
+
+---
+
 ## 编译器路径
 
 ```bash
