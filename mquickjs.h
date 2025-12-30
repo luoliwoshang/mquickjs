@@ -33,8 +33,11 @@
 #define __js_printf_like(a, b)
 #endif
 
+/* Use MQJS_FORCE_32BIT to generate 32-bit bindings on a 64-bit host */
+#ifndef MQJS_FORCE_32BIT
 #if INTPTR_MAX >= INT64_MAX
 #define JS_PTR64 /* pointers are 64 bit wide instead of 32 bit wide */
+#endif
 #endif
 
 typedef struct JSContext JSContext;
