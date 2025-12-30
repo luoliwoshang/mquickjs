@@ -1,4 +1,4 @@
-module mquick
+module github.com/luoliwoshang/mquickjs/mquickjs
 
 go 1.24.10
 
