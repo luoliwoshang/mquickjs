@@ -180,6 +180,56 @@ ESP-IDF 默认启用此选项，因为 Flash 映射地址可能超出 1MB 范围
 
 官方文档：https://gcc.gnu.org/onlinedocs/gcc/Xtensa-Options.html
 
+## 使用 Clang 编译
+
+ESP-IDF 支持使用 Clang 工具链编译（实验性功能）。
+
+### 安装 esp-clang
+
+```bash
+idf_tools.py install esp-clang
+```
+
+### 使用 Clang 构建
+
+```bash
+# 设置环境变量并构建
+IDF_TOOLCHAIN=clang idf.py build
+
+# 烧录
+idf.py flash monitor
+```
+
+### GCC vs Clang 编译参数对比
+
+| GCC 参数 | Clang 对应 | 说明 |
+|----------|-----------|------|
+| `-mlongcalls` | `-Xassembler --longcalls` | 长调用（Clang 语法不同） |
+| `--target=xtensa-esp-elf -mcpu=esp32` | ✅ | Clang 需要指定 target |
+| `-Os` | ✅ | 通用 |
+| `-ffunction-sections` | ✅ | 通用 |
+| `-fdata-sections` | ✅ | 通用 |
+| `-fno-math-errno` | ✅ | 通用 |
+| `-fno-builtin-memcpy` | ✅ | 通用 |
+
+### Clang 工具链文件
+
+ESP-IDF 的 Clang 工具链配置位于：
+```
+$IDF_PATH/tools/cmake/toolchain-clang-esp32.cmake
+```
+
+关键配置：
+- 编译器: `clang` / `clang++`
+- 链接器: `xtensa-esp32-elf-clang-ld`
+- 归档工具: `llvm-ar`（替代 `xtensa-esp32-elf-ar`）
+
+### 注意事项
+
+- Clang 编译是**实验性功能**，构建时会有警告提示
+- 当前测试版本: esp-clang 18.1.2
+- 大部分编译参数与 GCC 兼容，但 `-mlongcalls` 需要改为 `-Xassembler --longcalls`
+
 ## Go 绑定 (llcppg)
 
 ### 配置文件
